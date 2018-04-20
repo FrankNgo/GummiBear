@@ -20,6 +20,11 @@ namespace GummiBear.Controllers
             return View(model);
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
+
         [HttpPost]
         public IActionResult Create(Item item)
         {
