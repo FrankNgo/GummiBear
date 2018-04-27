@@ -10,28 +10,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GummiBear.Controllers
 {
-    public class ItemController : Controller
+    public class ItemsController : Controller
     {
         private StoreDbContext db = new StoreDbContext();
-
-        public IActionResult Item()
-        {
-            List<Item> model = db.Items.ToList();
-            return View(model);
-            //return View(db.Items.Include(items => items.Name).ToList());
-        }
-
-
         public IActionResult Index()
         {
-            List<Item> model = db.Items.ToList();
-            return View(model);
-            //return View(db.Items.Include(items => items.name).ToList());
+            //List<Item> model = db.Items.ToList();
+            //return View(model);
+            return View(db.Items.Include(items => items.Reviews).ToList());
         }
 
         public IActionResult Details(int id)
         {
-            //Item thisItem = db.items.FirstOrDefault(items => items.ItemId == id);
+            //Item thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
             var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
             return View(thisItem);
         }
@@ -47,7 +38,7 @@ namespace GummiBear.Controllers
         {
             db.Items.Add(item);
             db.SaveChanges();
-            return RedirectToAction("Index");//Maybe want to change to difference route
+            return RedirectToAction("Index");
         }
 
         public IActionResult Edit(int id)
@@ -78,6 +69,12 @@ namespace GummiBear.Controllers
             db.Items.Remove(thisItem);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+
+        public IActionResult Item()
+        {
+            return View("../Items/Index");
         }
     }
 }

@@ -48,13 +48,13 @@ namespace GummiBear.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("GummiBear.Models.Review", b =>
                 {
                     b.HasOne("GummiBear.Models.Item", "Item")
-                        .WithMany("Reviews")
+                        .WithMany("Items")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

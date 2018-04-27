@@ -24,7 +24,7 @@ namespace GummiBear.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
+                name: "Items",
                 columns: table => new
                 {
                     ReviewId = table.Column<int>(nullable: false)
@@ -36,9 +36,9 @@ namespace GummiBear.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.ReviewId);
+                    table.PrimaryKey("PK_Items", x => x.ReviewId);
                     table.ForeignKey(
-                        name: "FK_Reviews_Items_ItemId",
+                        name: "FK_Items_Items_ItemId",
                         column: x => x.ItemId,
                         principalTable: "Items",
                         principalColumn: "ItemId",
@@ -46,15 +46,15 @@ namespace GummiBear.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_ItemId",
-                table: "Reviews",
+                name: "IX_Items_ItemId",
+                table: "Items",
                 column: "ItemId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Reviews");
+                name: "Items");
 
             migrationBuilder.DropTable(
                 name: "Items");
