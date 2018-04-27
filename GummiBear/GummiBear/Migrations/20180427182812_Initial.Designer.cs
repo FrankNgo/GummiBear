@@ -8,7 +8,7 @@ using GummiBear.Models;
 namespace GummiBear.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20180427180206_Initial")]
+    [Migration("20180427182812_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,7 @@ namespace GummiBear.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<int?>("ReviewId");
-
                     b.HasKey("ItemId");
-
-                    b.HasIndex("ReviewId");
 
                     b.ToTable("Items");
                 });
@@ -43,20 +39,25 @@ namespace GummiBear.Migrations
 
                     b.Property<string>("Author");
 
-                    b.Property<string>("content");
+                    b.Property<string>("Content");
 
-                    b.Property<string>("rating");
+                    b.Property<int>("ItemId");
+
+                    b.Property<string>("Rating");
 
                     b.HasKey("ReviewId");
+
+                    b.HasIndex("ItemId");
 
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("GummiBear.Models.Item", b =>
+            modelBuilder.Entity("GummiBear.Models.Review", b =>
                 {
-                    b.HasOne("GummiBear.Models.Review", "Review")
-                        .WithMany("Items")
-                        .HasForeignKey("ReviewId");
+                    b.HasOne("GummiBear.Models.Item", "Item")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
         }
     }
