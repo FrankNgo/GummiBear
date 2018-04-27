@@ -13,6 +13,7 @@ namespace GummiBear.Models
         {
         }
         public DbSet<Item> Items { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
