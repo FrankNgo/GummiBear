@@ -14,6 +14,7 @@ namespace GummiBear.Tests
 
             //Act
             var result = item.Name;
+            item.Name = "Blender";
 
             //Assert
             Assert.AreEqual("Blender", result);
