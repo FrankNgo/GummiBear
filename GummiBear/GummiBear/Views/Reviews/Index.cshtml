@@ -1,0 +1,52 @@
+﻿@model IEnumerable<GummiBear.Models.Review>
+
+@{
+    ViewData["Title"] = "Review";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<h2>To Do List</h2>
+<hr />
+<table class="table">
+    <tr>
+        <th>
+            Checkoff
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Content)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Item)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var listItem in Model)
+    {
+
+        <tr>
+            <td>
+                <input type="checkbox" value="done"><br>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => listItem.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => listItem.Item.Name)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = listItem.ItemId }) |
+                @Html.ActionLink("Details", "Details", new { id = listItem.ItemId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = listItem.ItemId })
+            </td>
+
+
+        </tr>
+
+    }
+</table>
+@Html.ActionLink("Create new item", "Create") |
+@Html.ActionLink("Categories List", "Index", "Category")

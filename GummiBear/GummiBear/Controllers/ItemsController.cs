@@ -10,15 +10,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GummiBear.Controllers
 {
-    public class CategoryController : Controller
+    public class ItemController : Controller
     {
         private StoreDbContext db = new StoreDbContext();
 
-        public IActionResult Category()
+        public IActionResult Item()
         {
             List<Item> model = db.Items.ToList();
             return View(model);
-            //return View(db.Categories.Include(categories => categories.Name).ToList());
+            //return View(db.Items.Include(items => items.Name).ToList());
         }
 
 
@@ -26,19 +26,19 @@ namespace GummiBear.Controllers
         {
             List<Item> model = db.Items.ToList();
             return View(model);
-            //return View(db.Categories.Include(categories => categories.name).ToList());
+            //return View(db.Items.Include(items => items.name).ToList());
         }
 
         public IActionResult Details(int id)
         {
-            //Item thisItem = db.categories.FirstOrDefault(categories => categories.ItemId == id);
+            //Item thisItem = db.items.FirstOrDefault(items => items.ItemId == id);
             var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
             return View(thisItem);
         }
 
         public IActionResult Create()
         {
-            ViewBag.ItemId = new SelectList(db.Items, "ItemId", "Author");
+            ViewBag.ItemId = new SelectList(db.Items, "ItemId", "Name");
             return View();
         }
 
@@ -53,7 +53,7 @@ namespace GummiBear.Controllers
         public IActionResult Edit(int id)
         {
             var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
-            ViewBag.thisItem = new SelectList(db.Items, "ItemId", "Author");
+            ViewBag.ItemId = new SelectList(db.Items, "ItemId", "Name");
             return View(thisItem);
         }
 

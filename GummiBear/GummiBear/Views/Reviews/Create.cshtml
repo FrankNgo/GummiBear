@@ -1,0 +1,21 @@
+﻿@model GummiBear.Models.Review
+
+@{
+    ViewData["Title"] = "Review - Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Create a new review</h2>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.LabelFor(model => model.Content)
+    @Html.EditorFor(model => model.Content)
+
+    @Html.LabelFor(model => model.ItemId)
+    @Html.DropDownList("ItemId")
+
+    <input type="submit" value="Create" class="btn btn-default" />
+}
+
+@Html.ActionLink("Back to List", "Index")

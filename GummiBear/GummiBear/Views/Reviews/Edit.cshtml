@@ -1,21 +1,21 @@
-﻿@model GummiBear.Models.Item
+﻿@model GummiBear.Models.Review
 
 @{
-    ViewData["Title"] = "Item - Edit";
+    ViewData["Title"] = "Review - Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h2>Edit</h2>
 <hr />
-<h4>Edit this item: @Html.DisplayFor(model => model.Name)</h4>
+<h4>Edit this review: @Html.DisplayFor(model => model.Content)</h4>
 @using (Html.BeginForm())
 {
     @Html.HiddenFor(model => model.ItemId)
 
-    @Html.LabelFor(model => model.Name)
-    @Html.EditorFor(model => model.Name)
+    @Html.LabelFor(model => model.Content)
+    @Html.EditorFor(model => model.Content)
 
     @Html.LabelFor(model => model.ItemId)
-    @Html.DropDownList("CategoryId")
+    @Html.DropDownList("ItemId")
 
     <input type="submit" value="Save" class="btn btn-default" />
 }

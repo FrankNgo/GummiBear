@@ -4,16 +4,14 @@
     ViewData["Title"] = "Item";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>To Do List</h2>
-<hr />
+<h2>Item List</h2>
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Description)
+            @Html.DisplayNameFor(model => model.Name)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Review.Author)
-        </th>
+
         <th></th>
     </tr>
 
@@ -21,11 +19,9 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => listItem.Description)
+                @Html.DisplayFor(modelItem => listItem.Name)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => listItem.Review.Author)
-            </td>
+
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = listItem.ItemId }) |
                 @Html.ActionLink("Details", "Details", new { id = listItem.ItemId }) |
@@ -34,6 +30,5 @@
         </tr>
     }
 </table>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+@Html.ActionLink("Create new item", "Create", "Item") |
+@Html.ActionLink("Back To Task list", "Index", "Items")
