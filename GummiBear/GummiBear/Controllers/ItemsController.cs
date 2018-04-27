@@ -4,8 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GummiBear.Models;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
 
 namespace GummiBear.Controllers
 {
@@ -37,6 +36,35 @@ namespace GummiBear.Controllers
         {
             Item thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
             return View(thisItem);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
+            return View(thisItem);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Item item)
+        {
+            db.Entry(item).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Delete(int id)
+        {
+            var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
+            return View(thisItem);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
+            db.Items.Remove(thisItem);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }
