@@ -35,7 +35,7 @@ namespace GummiBear.Tests
         }
 
         [TestMethod]
-        public void GetRating_ReturnsReviewRating_String()
+        public void GetRating_ReturnsReviewRating_Int()
         {
             //Arrange
             var review = new Review();
