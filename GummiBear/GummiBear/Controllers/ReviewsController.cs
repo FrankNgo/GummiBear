@@ -15,16 +15,8 @@ namespace GummiBear.Controllers
         private StoreDbContext db = new StoreDbContext();
         public IActionResult Index()
         {
-            //List<Review> model = db.Reviews.ToList();
-            //return View(model);
-            return View(db.Reviews.Include(reviews => reviews.Item).ToList());
-        }
 
-        public IActionResult Details(int id)
-        {
-            //Review thisReview = db.Reviews.FirstOrDefault(reviews => reviews.ReviewId == id);
-            var thisReview = db.Reviews.FirstOrDefault(reviews => reviews.ReviewId == id);
-            return View(thisReview);
+            return View(db.Reviews.Include(reviews => reviews.Item).ToList());
         }
 
         public IActionResult Create()
@@ -39,42 +31,6 @@ namespace GummiBear.Controllers
             db.Reviews.Add(review);
             db.SaveChanges();
             return RedirectToAction("Index");
-        }
-
-        public IActionResult Edit(int id)
-        {
-            var thisReview = db.Reviews.FirstOrDefault(reviews => reviews.ReviewId == id);
-            ViewBag.ItemId = new SelectList(db.Items, "ItemId", "Name");
-            return View(thisReview);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Review review)
-        {
-            db.Entry(review).State = EntityState.Modified;
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Delete(int id)
-        {
-            var thisReview = db.Reviews.FirstOrDefault(reviews => reviews.ReviewId == id);
-            return View(thisReview);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var thisReview = db.Reviews.FirstOrDefault(reviews => reviews.ReviewId == id);
-            db.Reviews.Remove(thisReview);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-
-        public IActionResult Item()
-        {
-            return View("../Items/Index");
         }
     }
 }
