@@ -40,6 +40,8 @@ namespace GummiBear.Test.ControllerTests
                 Assert.IsInstanceOfType(result, typeof(ActionResult));
             }
 
+
+
             [TestMethod]
             public void Mock_IndexContainsModelData_List() 
             {
@@ -57,11 +59,16 @@ namespace GummiBear.Test.ControllerTests
             [TestMethod]
             public void Mock_DeleteGetModelContainsItem_Item()
             {
+                // Arrange
                 DbSetup();
                 Item item = mock.Object.Items.FirstOrDefault();
                 ItemsController controller = new ItemsController(mock.Object);
+
+                // Act
                 var resultView = controller.Delete(item.ItemId) as ViewResult;
                 var model = resultView.ViewData.Model as Item;
+
+                // Assert
                 Assert.IsInstanceOfType(model, typeof(Item));
                 Assert.AreEqual(item, model);
             }
@@ -69,13 +76,17 @@ namespace GummiBear.Test.ControllerTests
             [TestMethod]
             public void Mock_GetViewResultCreatePost_ActionResult() // Confirms route returns view
             {
+                // Arrange
                 DbSetup();
                 Item item = new Item { ItemId = 3, Name = "Test 3", Description = "Its one more test" };
                 ItemsController controller = new ItemsController(mock.Object);
+
+                // Act
                 var result = controller.Create(item);
+
+                // Assert
                 Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
             }
-
 
             [TestMethod]
             public void Mock_GetDetails_ReturnsView()
