@@ -15,14 +15,13 @@ namespace GummiBear.Controllers
         private StoreDbContext db = new StoreDbContext();
         public IActionResult Index()
         {
-            //List<Item> model = db.Items.ToList();
-            //return View(model);
+       
             return View(db.Items.Include(items => items.Reviews).ToList());
         }
 
         public IActionResult Details(int id)
         {
-            //Item thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
+           
             var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
             return View(thisItem);
         }
