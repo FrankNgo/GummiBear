@@ -74,7 +74,7 @@ namespace GummiBear.Test.ControllerTests
             }
 
             [TestMethod]
-            public void Mock_GetViewResultCreatePost_ActionResult() // Confirms route returns view
+            public void Mock_GetViewResultCreatePost_ActionResult() 
             {
                 // Arrange
                 DbSetup();

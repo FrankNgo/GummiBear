@@ -27,8 +27,6 @@ namespace GummiBear.Controllers
                 this.itemRepo = repo;
             }
         }
-
-
          
         public IActionResult Index()
         {
@@ -107,6 +105,18 @@ namespace GummiBear.Controllers
             Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
             itemRepo.Remove(thisItem);   // Updated!
             // Removed db.SaveChanges() call
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult DeleteAll()
+        {
+            return View();
+        }
+
+        [HttpPost, ActionName("DeleteAll")]
+        public IActionResult DeleteAllConfirmed()
+        {
+            ProductRepo.RemoveAll();
             return RedirectToAction("Index");
         }
 
