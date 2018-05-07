@@ -41,11 +41,11 @@ namespace GummiBear.Tests
             var review = new Review();
 
             //Act
-            review.Rating = "5";
+            review.Rating = 5;
             var result = review.Rating;
 
             //Assert
-            Assert.AreEqual("5", result);
+            Assert.AreEqual(5, result);
         }
 
     }

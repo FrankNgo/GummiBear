@@ -1,21 +1,22 @@
 ﻿@model GummiBear.Models.Review
 
 @{
-    ViewData["Title"] = "Review - Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "_Layout";
+    ViewBag.Title = "GBK - Add Review";
 }
-<h2>Create a new review</h2>
-<hr />
+
+<h1>Add A Review For @ViewBag.Item.Name</h1>
 
 @using (Html.BeginForm())
 {
-    @Html.LabelFor(model => model.Content)
-    @Html.EditorFor(model => model.Content)
+    @Html.HiddenFor(model => model.ItemId)
+    @Html.LabelFor(model => model.Rating)<br>
+    @Html.EditorFor(model => model.Rating)<br>
 
-    @Html.LabelFor(model => model.ItemId)
-    @Html.DropDownList("ItemId")
+    @Html.LabelFor(model => model.Content)<br>
+    @Html.TextAreaFor(model => model.Content, 5, 80, null)<br>
 
-    <input type="submit" value="Create" class="btn btn-default" />
+    <input type="submit" value="Create" class="btn btn">
+
+    @Html.ActionLink("Return To Review List", "Index", new { id = ViewBag.Item.ItemId })
 }
-
-@Html.ActionLink("Back to List", "Index")

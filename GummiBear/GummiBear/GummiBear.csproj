@@ -8,7 +8,6 @@
     <Folder Include="wwwroot\" />
     <Folder Include="Controllers\" />
     <Folder Include="Views\Home\" />
-    <Folder Include="Models\Repositories\" />
   </ItemGroup>
 
   <ItemGroup>

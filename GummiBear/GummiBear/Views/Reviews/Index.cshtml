@@ -1,52 +1,26 @@
 ﻿@model IEnumerable<GummiBear.Models.Review>
 
 @{
-    ViewData["Title"] = "Review";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "_Layout";
+    ViewBag.Title = "GBK - Add Review";
 }
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<h1>Reviews For @ViewBag.Item.Name</h1>
 
-<h2>Reviwers</h2>
-<hr />
-<table class="table">
-    <tr>
-        <th>
-            Checkoff
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Content)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Item)
-        </th>
+@if (Model.Count() == 0)
+{
+    <h3>Average Rating: N/A</h3>
+}
 
-        <th></th>
-    </tr>
-
-    @foreach (var listItem in Model)
-    {
-
-        <tr>
-            <td>
-                <input type="checkbox" value="done"><br>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => listItem.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => listItem.Item.Name)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = listItem.ItemId }) |
-                @Html.ActionLink("Details", "Details", new { id = listItem.ItemId }) |
-                @Html.ActionLink("Delete", "Delete", new { id = listItem.ItemId })
-            </td>
+@foreach (var review in Model)
+{
+    <div>
+        <h4>Rating: @review.Rating</h4>
+        <h5>@review.Content</h5>
+        <br />
+    </div>
+}
 
 
-        </tr>
-
-    }
-</table>
-@Html.ActionLink("Create new item", "Create") |
-@Html.ActionLink("Categories List", "Index", "Category")
+@Html.ActionLink("Add a Review", "Create", "Reviews", new { id = ViewBag.Item.ItemId }) |
+@Html.ActionLink("Back to Items", "Index", "Items", new { id = ViewBag.Item.ItemId })

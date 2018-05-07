@@ -95,7 +95,7 @@ namespace GummiBear.Test.ControllerTests
             {
                 // Arrange
                 DbSetup();
-                Item item = new Item { ItemId = 3, Name = "Test 3", Description = "Its one more test" };
+                Item item = new Item { ItemId = 1 , Name = "Blender"};
                 ItemsController controller = new ItemsController(mock.Object);
 
                 // Act
@@ -109,12 +109,7 @@ namespace GummiBear.Test.ControllerTests
             public void Mock_GetDetails_ReturnsView()
             {
                 // Arrange
-                Item testItem = new Item
-                {
-                    ItemId = 1,
-                    Description = "Blender"
-                };
-
+                Item testItem = new Item{ ItemId = 1, Description = "Blender"};
                 DbSetup();
                 ItemsController controller = new ItemsController(mock.Object);
 
@@ -126,8 +121,6 @@ namespace GummiBear.Test.ControllerTests
                 Assert.IsInstanceOfType(resultView, typeof(ViewResult));
                 Assert.IsInstanceOfType(model, typeof(Item));
             }
-
-  
         }
     }
 }

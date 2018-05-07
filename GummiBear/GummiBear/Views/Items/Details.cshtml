@@ -5,4 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h2>Item Details</h2>
+
+<h4>@Html.ActionLink("Add Review", "Create", "Reviews", new { id = Model.ItemId })</h4>
+<h4>@Html.ActionLink("See All Reviews", "Index", "Reviews", new { id = Model.ItemId })</h4>
 <hr />

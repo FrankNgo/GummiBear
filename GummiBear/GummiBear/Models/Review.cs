@@ -10,7 +10,7 @@ namespace GummiBear.Models
         public int ReviewId { get; set; }
         public string Author { get; set; }
         public string Content { get; set; }
-        public string Rating { get; set; }
+        public int Rating { get; set; }
         public int ItemId { get; set; }
         public virtual Item Item { get; set; }
     }

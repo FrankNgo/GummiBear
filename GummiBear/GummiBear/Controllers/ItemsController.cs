@@ -30,18 +30,11 @@ namespace GummiBear.Controllers
          
         public IActionResult Index()
         {
-       
-            //return View(db.Items.Include(items => items.Reviews).ToList());
-
             return View(itemRepo.Items.ToList());
         }
 
         public IActionResult Details(int id)
         {
-           
-            //var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
-            //return View(thisItem);
-
             Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
             return View(thisItem);
         }
@@ -54,21 +47,13 @@ namespace GummiBear.Controllers
         [HttpPost]
         public IActionResult Create(Item item)
         {
-            //db.Items.Add(item);
-            //db.SaveChanges();
-            //return RedirectToAction("Index");
 
-            itemRepo.Save(item);   // Updated
-            // Removed db.SaveChanges() call
+            itemRepo.Save(item);  
             return RedirectToAction("Index");
         }
 
         public IActionResult Edit(int id)
         {
-            //var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
-            //ViewBag.ItemId = new SelectList(db.Items, "ItemId", "Name");
-            //return View(thisItem);
-
             Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
             return View(thisItem);
         }
@@ -76,20 +61,12 @@ namespace GummiBear.Controllers
         [HttpPost]
         public IActionResult Edit(Item item)
         {
-            //db.Entry(item).State = EntityState.Modified;
-            //db.SaveChanges();
-            //return RedirectToAction("Index");
-
-            itemRepo.Edit(item);   // Updated!
-            // Removed db.SaveChanges() call
+            itemRepo.Edit(item);  
             return RedirectToAction("Index");
         }
 
         public IActionResult Delete(int id)
         {
-            //var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
-            //return View(thisItem);
-
             Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
             return View(thisItem);
         }
@@ -97,22 +74,13 @@ namespace GummiBear.Controllers
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
-            //var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
-            //db.Items.Remove(thisItem);
-            //db.SaveChanges();
-            //return RedirectToAction("Index");
-
             Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
-            itemRepo.Remove(thisItem);   // Updated!
-            // Removed db.SaveChanges() call
+            itemRepo.Remove(thisItem); 
             return RedirectToAction("Index");
         }
 
         public IActionResult DeleteAll(int id)
         {
-            //var thisItem = db.Items.FirstOrDefault(items => items.ItemId == id);
-            //return View(thisItem);
-
             Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
             return View(thisItem);
         }
