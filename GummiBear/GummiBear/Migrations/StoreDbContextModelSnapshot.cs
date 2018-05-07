@@ -13,7 +13,7 @@ namespace GummiBear.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.1.5");
+                .HasAnnotation("ProductVersion", "1.1.2");
 
             modelBuilder.Entity("GummiBear.Models.Item", b =>
                 {
@@ -48,13 +48,13 @@ namespace GummiBear.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("GummiBear.Models.Review", b =>
                 {
                     b.HasOne("GummiBear.Models.Item", "Item")
-                        .WithMany("Items")
+                        .WithMany("Reviews")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
