@@ -12,6 +12,7 @@ namespace GummiBear.Models
         public StoreDbContext()
         {
         }
+
         public DbSet<Item> Items { get; set; }
         public DbSet<Review> Reviews { get; set; }
 

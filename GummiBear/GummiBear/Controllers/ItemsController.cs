@@ -27,57 +27,93 @@ namespace GummiBear.Controllers
                 this.itemRepo = repo;
             }
         }
-         
-        public IActionResult Index()
+
+        private readonly StoreDbContext _context;
+
+        public ItemsController(StoreDbContext context)
         {
-            return View(itemRepo.Items.ToList());
+            _context = context;
         }
 
-        public IActionResult Details(int id)
+
+        public async Task<IActionResult> Index()
         {
-            Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
-            return View(thisItem);
+            return View(await _context.Items.ToListAsync());
         }
+
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            var item = await _context.Items.SingleOrDefaultAsync(m => m.ItemId == id);
+            return View(item);
+        }
+
 
         public IActionResult Create()
         {
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Create(Item item)
-        {
-
-            itemRepo.Save(item);  
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Edit(int id)
-        {
-            Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
-            return View(thisItem);
-        }
 
         [HttpPost]
-        public IActionResult Edit(Item item)
+        public async Task<IActionResult> Create([Bind("ItemId,Name,Cost,Description")] Item item)
         {
-            itemRepo.Edit(item);  
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                _context.Add(item);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(item);
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
-            return View(thisItem);
+            var item = await _context.Items.SingleOrDefaultAsync(m => m.ItemId == id);
+            return View(item);
+        }
+
+        [HttpPost]  
+        public async Task<IActionResult> Edit(int id, [Bind("GummiId,Name,Cost,Description")] Item item)
+        {
+            if (id != item.ItemId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(item);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                  
+                        throw;
+                   
+                }
+                return RedirectToAction("Index");
+            }
+            return View(item);
+        }
+
+        public async Task<IActionResult> Delete(int? id)
+        {    
+            var item = await _context.Items.SingleOrDefaultAsync(m => m.ItemId == id);
+            return View(item);
         }
 
         [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
-            itemRepo.Remove(thisItem); 
+            var item = await _context.Items.SingleOrDefaultAsync(m => m.ItemId == id);
+            _context.Items.Remove(item);
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
 
         public IActionResult DeleteAll(int id)
         {

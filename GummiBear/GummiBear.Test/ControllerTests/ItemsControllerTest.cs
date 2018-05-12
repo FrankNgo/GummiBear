@@ -1,13 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GummiBear.Models;
-using System;
-using Moq;
-using System.Linq;
-using GummiBear.Controllers;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.AspNetCore.Mvc;
+using GummiBear.Models;
+using GummiBear.Tests;
+using Moq;
+using GummiBear.Controllers;
+using System.Threading.Tasks;
 
-namespace GummiBear.Test.ControllerTests
+namespace GummiBear.Test
 {
     public class ItemsControllerTest
     {
@@ -20,14 +22,14 @@ namespace GummiBear.Test.ControllerTests
             {
                 mock.Setup(m => m.Items).Returns(new Item[]
                 {
-                new Item {ItemId = 1, Name = "Blender" },
-                new Item {ItemId = 2, Name = "Dishwasher" },
-                new Item {ItemId = 3, Name = "Dryer" }
+                new Item {ItemId = 1, Description = "A new red gummi" },
+                new Item {ItemId = 2, Description = "A new blue gummi"},
+                new Item {ItemId = 3, Description = "A new green gummi"}
                 }.AsQueryable());
             }
 
             [TestMethod]
-            public void Mock_GetViewResultIndex_ActionResult() 
+            public void Controller_GetViewResultIndex_IActionResult()
             {
                 //Arrange
                 DbSetup();
@@ -37,90 +39,108 @@ namespace GummiBear.Test.ControllerTests
                 var result = controller.Index();
 
                 //Assert
-                Assert.IsInstanceOfType(result, typeof(ActionResult));
-            }
-
-
-
-            [TestMethod]
-            public void Mock_IndexContainsModelData_List() 
-            {
-                // Arrange
-                DbSetup();
-                ViewResult indexView = new ItemsController(mock.Object).Index() as ViewResult;
-
-                // Act
-                var result = indexView.ViewData.Model;
-
-                // Assert
-                Assert.IsInstanceOfType(result, typeof(List<Item>));
+                Assert.IsInstanceOfType(result, typeof(Task<IActionResult>));
             }
 
             [TestMethod]
-            public void Mock_DeleteGetModelContainsItem_Item()
+            public void Controller_GetViewResultDetails_IActionResult()
             {
-                // Arrange
-                DbSetup();
-                Item item = mock.Object.Items.FirstOrDefault();
-                ItemsController controller = new ItemsController(mock.Object);
-
-                // Act
-                var resultView = controller.Delete(item.ItemId) as ViewResult;
-                var model = resultView.ViewData.Model as Item;
-
-                // Assert
-                Assert.IsInstanceOfType(model, typeof(Item));
-                Assert.AreEqual(item, model);
-            }
-
-            [TestMethod]
-            public void Mock_DeleteAllGetModelContainsItem_Item()
-            {
-                // Arrange
-                DbSetup();
-                Item item = mock.Object.Items.FirstOrDefault();
-                ItemsController controller = new ItemsController(mock.Object);
-
-                // Act
-                var resultView = controller.DeleteAll(item.ItemId) as ViewResult;
-                var model = resultView.ViewData.Model as Item;
-
-                // Assert
-                Assert.IsInstanceOfType(model, typeof(Item));
-                Assert.AreEqual(item, model);
-            }
-
-            [TestMethod]
-            public void Mock_GetViewResultCreatePost_ActionResult() 
-            {
-                // Arrange
-                DbSetup();
-                Item item = new Item { ItemId = 1 , Name = "Blender"};
-                ItemsController controller = new ItemsController(mock.Object);
-
-                // Act
-                var result = controller.Create(item);
-
-                // Assert
-                Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-            }
-
-            [TestMethod]
-            public void Mock_GetDetails_ReturnsView()
-            {
-                // Arrange
-                Item testItem = new Item{ ItemId = 1, Description = "Blender"};
+                //Arrange
                 DbSetup();
                 ItemsController controller = new ItemsController(mock.Object);
 
-                // Act
-                var resultView = controller.Details(testItem.ItemId) as ViewResult;
-                var model = resultView.ViewData.Model as Item;
+                //Act
+                var result = controller.Details(1);
 
-                // Assert
-                Assert.IsInstanceOfType(resultView, typeof(ViewResult));
-                Assert.IsInstanceOfType(model, typeof(Item));
+                //Assert
+                Assert.IsInstanceOfType(result, typeof(Task<IActionResult>));
             }
+
+            [TestMethod]
+            public void Controller_GetViewResultCreate_IActionResult()
+            {
+                //Arrange
+                DbSetup();
+                ItemsController controller = new ItemsController(mock.Object);
+
+                //Act
+                var result = controller.Create();
+
+                //Assert
+                Assert.IsInstanceOfType(result, typeof(IActionResult));
+            }
+
+            [TestMethod]
+            public void Controller_HttpPostCreate_Creates()
+            {
+                //Arrange
+                DbSetup();
+                ItemsController controller = new ItemsController(mock.Object);
+
+                //Act
+                var result = controller.Create();
+
+                //Assert
+                Assert.IsInstanceOfType(result, typeof(ViewResult));
+            }
+
+            [TestMethod]
+            public void Controller_GetViewEdit_Edits()
+            {
+                //Arrange
+                DbSetup();
+                ItemsController controller = new ItemsController(mock.Object);
+
+                //Act
+                var result = controller.Edit(1);
+
+                //Assert
+                Assert.IsInstanceOfType(result, typeof(Task<IActionResult>));
+            }
+
+            [TestMethod]
+            public void Controller_HttpPostEdit_Edits()
+            {
+                //Arrange
+                DbSetup();
+                ItemsController controller = new ItemsController(mock.Object);
+
+                //Act
+                var result = controller.Edit(1);
+
+                //Assert
+                Assert.IsInstanceOfType(result, typeof(Task<IActionResult>));
+            }
+
+            [TestMethod]
+            public void Controller_GetViewDelete_Deletes()
+            {
+                DbSetup();
+                ItemsController controller = new ItemsController(mock.Object);
+
+                //Act
+                var result = controller.Delete(1);
+
+                //Assert
+                Assert.IsInstanceOfType(result, typeof(Task<IActionResult>));
+            }
+
+            [TestMethod]
+            public void Controller_HttpPostDeleteConfirm_Confirms()
+            {
+                DbSetup();
+                ItemsController controller = new ItemsController(mock.Object);
+
+                //Act
+                var result = controller.DeleteConfirmed(1);
+
+                //Assert
+                Assert.IsInstanceOfType(result, typeof(Task<IActionResult>));
+            }
+
+
+
+
         }
     }
 }
