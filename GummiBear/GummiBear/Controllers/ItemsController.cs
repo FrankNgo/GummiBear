@@ -115,20 +115,15 @@ namespace GummiBear.Controllers
         }
 
 
-        public IActionResult DeleteAll(int id)
-        {
-            Item thisItem = itemRepo.Items.FirstOrDefault(x => x.ItemId == id);
-            return View(thisItem);
-        }
-
-        [HttpPost]
         public IActionResult DeleteAll()
         {
-            List<Item> allItems = itemRepo.Items.ToList();
-            foreach (var item in allItems)
-            {
-                itemRepo.Remove(item);
-            }
+            return View();
+        }
+
+        [HttpPost, ActionName("DeleteAll")]
+        public IActionResult DeleteAllConfirmed()
+        {
+            itemRepo.RemoveAll();
             return RedirectToAction("Index");
         }
 

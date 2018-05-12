@@ -1,60 +1,35 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using GummiBear.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
+using GummiBear.Models;
+
 
 namespace GummiBear.Controllers
 {
     public class ReviewsController : Controller
     {
-        private IItemRepository ItemRepo;
+        private readonly StoreDbContext _context;
         private IReviewRepository ReviewRepo;
-        private IReviewRepository @object;
 
-        public ReviewsController(IItemRepository pRepo = null, IReviewRepository rRepo = null)
+        public ReviewsController(StoreDbContext context)
         {
-            ItemRepo = pRepo ?? new EFItemRepository();
-            ReviewRepo = rRepo ?? new EFReviewRepository();
+            _context = context;
         }
 
-        public ReviewsController(IReviewRepository @object)
+        public ReviewsController(IReviewRepository ReviewRepo)
         {
-            this.@object = @object;
+            this.ReviewRepo = ReviewRepo;
         }
 
-        public IActionResult Index(int id)
+        public async Task<IActionResult> Index()
         {
-            List<Review> model = ReviewRepo.Reviews.Where(r => r.ItemId == id).Include(r => r.Item).ToList();
-            Item Item = ItemRepo.Items.Include(p => p.Reviews).FirstOrDefault(p => p.ItemId == id);
-            ViewBag.Item = Item;
-            return View(model);
+            return View(await _context.Reviews.ToListAsync());
         }
 
-        public IActionResult Create(int id)
-        {
-            ViewBag.Item = ItemRepo.Items.FirstOrDefault(p => p.ItemId == id);
-            return View(new Review() { ItemId = id });
-        }
 
-        public object Index()
-        {
-            throw new NotImplementedException();
-        }
-
-        [HttpPost]
-        public IActionResult Create(Review review)
-        {
-          
-            ReviewRepo.Save(review);
-            return RedirectToAction("Index", new { id = review.ItemId });
-
-        }
-
-        public object Create()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

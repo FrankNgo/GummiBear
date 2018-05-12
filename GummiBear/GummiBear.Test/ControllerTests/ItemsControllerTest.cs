@@ -138,8 +138,23 @@ namespace GummiBear.Test
                 Assert.IsInstanceOfType(result, typeof(Task<IActionResult>));
             }
 
+            [TestMethod]
+            public void Controller_GetViewResultDeleteAllGet_ActionResult() // Confirms route returns view
+            {
+                DbSetup();
+                ItemsController controller = new ItemsController(mock.Object);
+                var result = controller.DeleteAll();
+                Assert.IsInstanceOfType(result, typeof(ViewResult));
+            }
 
-
+            [TestMethod]
+            public void Controller_GetViewResultDeleteAllPost_ActionResult() // Confirms route returns view
+            {
+                DbSetup();
+                ItemsController controller = new ItemsController(mock.Object);
+                var result = controller.DeleteAllConfirmed();
+                Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
+            }
 
         }
     }
