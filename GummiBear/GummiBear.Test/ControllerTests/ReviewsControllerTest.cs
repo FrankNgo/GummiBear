@@ -6,24 +6,23 @@ using Microsoft.AspNetCore.Mvc;
 using GummiBear.Models;
 using GummiBear.Tests;
 using Moq;
-
 using GummiBear.Controllers;
 using System.Threading.Tasks;
 
 namespace GummiBear.Tests
 {
     [TestClass]
-    public class GummisControllerTest
+    public class ReviewsControllerTests
     {
-        Mock<IItemRepository> mock = new Mock<IItemRepository>();
+        Mock<IReviewRepository> mock = new Mock<IReviewRepository>();
 
         private void DbSetup()
         {
-            mock.Setup(m => m.Items).Returns(new Item[]
+            mock.Setup(m => m.Reviews).Returns(new Review[]
             {
-                new Item {ItemId = 1, Description = "A new red gummi" },
-                new Item {ItemId = 2, Description = "A new blue gummi"},
-                new Item {ItemId = 3, Description = "A new green gummi"}
+                new Review {Author = "Don", Content = "Hate it." },
+                new Review {Author = "Ron", Content = "Like it." },
+                new Review {Author = "John", Content = "Love it." },
             }.AsQueryable());
         }
 
@@ -32,13 +31,41 @@ namespace GummiBear.Tests
         {
             //Arrange
             DbSetup();
-            ItemsController controller = new ItemsController(mock.Object);
+            ReviewsController controller = new ReviewsController(mock.Object);
 
             //Act
             var result = controller.Index();
 
             //Assert
             Assert.IsInstanceOfType(result, typeof(Task<IActionResult>));
+        }
+
+        [TestMethod]
+        public void Controller_GetViewResultCreate_IActionResult()
+        {
+            //Arrange
+            DbSetup();
+            ReviewsController controller = new ReviewsController(mock.Object);
+
+            //Act
+            var result = controller.Create();
+
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(IActionResult));
+        }
+
+        [TestMethod]
+        public void Controller_HttpPostCreate_Creates()
+        {
+            //Arrange
+            DbSetup();
+            ReviewsController controller = new ReviewsController(mock.Object);
+
+            //Act
+            var result = controller.Create();
+
+            //Assert
+            Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
 
 
