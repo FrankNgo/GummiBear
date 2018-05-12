@@ -38,6 +38,11 @@ namespace GummiBear.Controllers
             return View(new Review() { ItemId = id });
         }
 
+        public object Index()
+        {
+            throw new NotImplementedException();
+        }
+
         [HttpPost]
         public IActionResult Create(Review review)
         {

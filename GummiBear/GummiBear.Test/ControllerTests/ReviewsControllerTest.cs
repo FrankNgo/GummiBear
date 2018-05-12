@@ -1,76 +1,81 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GummiBear.Models;
-using GummiBear.Tests;
+using System;
 using Moq;
+using System.Linq;
+using GummiBear.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
-namespace GummiBear.Controllers.Tests
+namespace GummiBear.Test.ControllerTests
 {
-    [TestClass]
-    public class ReviewsControllerTests
+    public class ReviewsControllerTest
     {
-        private Mock<IReviewRepository> mock = new Mock<IReviewRepository>();
-        private Mock<IItemRepository> mockItem = new Mock<IItemRepository>();
-        //EFItemRepository db = new EFItemRepository(new TestDbContext());
-        //EFItemRepository dbItem = new EFItemRepository(new TestDbContext());
-        private void DbSetup()
+        [TestClass]
+        public class ReviewsControllerTests
         {
-            mockItem.Setup(m => m.Items).Returns(new Item[]
+            Mock<IReviewRepository> mock = new Mock<IReviewRepository>();
+
+            private void DbSetup()
+            {
+                mock.Setup(m => m.Reviews).Returns(new Review[]
                 {
-                    new Item { ItemId = 1, Name = "Test 1", Description = "Its a test" },
-                    new Item { ItemId = 2, Name = "Test 2", Description = "Its another test"}
+                new Review {ReviewId = 1, Author = "Blender" },
+                new Review {ReviewId = 2, Author = "Dishwasher" },
+                new Review {ReviewId = 3, Author = "Dryer" }
                 }.AsQueryable());
+            }
 
-            mock.Setup(m => m.Reviews).Returns(new Review[]
-                {
-                    new Review { Rating = 3, Content = "this is some content", ItemId = mockItem.Object.Items.FirstOrDefault().ItemId },
-                    new Review { Rating = 4, Content = "this is some more content", ItemId = mockItem.Object.Items.LastOrDefault().ItemId }
-                }.AsQueryable());
-        }
+            [TestMethod]
+            public void Mock_GetViewResultIndex_ActionResult()
+            {
+                //Arrange
+                DbSetup();
+                ReviewsController controller = new ReviewsController(mock.Object);
 
-     
+                //Act
+                var result = controller.Index();
 
-        [TestMethod]
-        public void Mock_GetViewResultIndex_ActionResult() // Confirms route returns view
-        {
-            DbSetup();
-            ReviewsController controller = new ReviewsController(mock.Object);
-            var result = controller.Index(mockItem.Object.Items.FirstOrDefault().ItemId);
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-        }
-        [TestMethod]
-        public void Mock_GetViewResultCreateGet_ActionResult() // Confirms route returns view
-        {
-            DbSetup();
-            ReviewsController controller = new ReviewsController(mock.Object);
-            var result = controller.Create();
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-        }
-        [TestMethod]
-        public void Mock_GetViewResultCreatePost_ActionResult() // Confirms route returns view
-        {
-            DbSetup();
-            int ItemId = mockItem.Object.Items.FirstOrDefault().ItemId;
-            Review review = new Review { Rating = 2, Content = "some test content", ItemId = ItemId };
-            ReviewsController controller = new ReviewsController(mock.Object);
-            var result = controller.Create(review);
-            Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
-        }
+                //Assert
+                Assert.IsInstanceOfType(result, typeof(ActionResult));
+            }
 
-        [TestMethod]
-        public void Mock_IndexModelContainsItems_Collection()
-        {
-            DbSetup();
-            ReviewsController controller = new ReviewsController(mock.Object);
-            int ItemId = mockItem.Object.Items.FirstOrDefault().ItemId;
 
-            ViewResult indexView = controller.Index(ItemId) as ViewResult;
-            var collection = indexView.ViewData.Model as List<Review>;
 
-            Assert.IsInstanceOfType(collection, typeof(List<Review>));
+            [TestMethod]
+            public void Mock_IndexContainsModelData_List()
+            {
+                // Arrange
+                DbSetup();
+                ViewResult indexView = new ReviewsController(mock.Object).Index() as ViewResult;
+
+                // Act
+                var result = indexView.ViewData.Model;
+
+                // Assert
+                Assert.IsInstanceOfType(result, typeof(List<Review>));
+            }
+
+         
+
+        
+
+            [TestMethod]
+            public void Mock_GetViewResultCreatePost_ActionResult()
+            {
+                // Arrange
+                DbSetup();
+                Review Review = new Review { ReviewId = 1, Author = "Blender" };
+                ReviewsController controller = new ReviewsController(mock.Object);
+
+                // Act
+                var result = controller.Create(Review);
+
+                // Assert
+                Assert.IsInstanceOfType(result, typeof(RedirectToActionResult));
+            }
+
+         
         }
     }
 }

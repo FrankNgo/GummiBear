@@ -11,7 +11,7 @@ namespace GummiBear.Test.ControllerTests
 {
     public class ItemsControllerTest
     {
-        [TestClass]
+    [TestClass]
     public class ItemsControllerTests
         {
             Mock<IItemRepository> mock = new Mock<IItemRepository>();

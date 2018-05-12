@@ -5,7 +5,12 @@ VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GummiBear", "GummiBear\GummiBear.csproj", "{0E5F3FC6-BC75-49EC-B80A-192C169AE661}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GummiBear.Test", "GummiBear.Test\GummiBear.Test.csproj", "{A3190173-8F39-42F6-A413-7DE6A993A84E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GummiBear.Test", "GummiBear.Test\GummiBear.Test.csproj", "{A3190173-8F39-42F6-A413-7DE6A993A84E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8F216DED-561B-40DD-97F0-E0EC9B21B93B}"
+	ProjectSection(SolutionItems) = preProject
+		Grant.sql.sql = Grant.sql.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
