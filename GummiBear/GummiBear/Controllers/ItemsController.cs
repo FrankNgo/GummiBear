@@ -3,36 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using GummiBear.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using GummiBear.Models.Repositories;
+using Microsoft.EntityFrameworkCore;
+using GummiBear.Models;
 
 namespace GummiBear.Controllers
 {
     public class ItemsController : Controller
     {
-        private IItemRepository itemRepo;
+        private IItemRepository ItemRepository;
 
-        public ItemsController(IItemRepository repo = null)
+        public ItemsController(IItemRepository repository = null)
         {
-            if (repo == null)
+            if (repository == null)
             {
-                this.itemRepo = new EFItemRepository();
+                this.ItemRepository = new EFItemRepository();
             }
             else
             {
-                this.itemRepo = repo;
+                this.ItemRepository = repository;
             }
         }
 
-        public IActionResult Index()
+        public ViewResult Index()
         {
-            List<Item> model = itemRepo.Items.ToList();
-            return View(model);
+            return View(ItemRepository.Items.ToList());
         }
 
-        public IActionResult Create()
+        public IActionResult Details(int id)
+        {
+            Item thisItem = ItemRepository.Items.Include(items => items.Reviews).FirstOrDefault(p => p.ItemId == id);
+            return View(thisItem);
+        }
+
+        public ViewResult Create()
         {
             return View();
         }
@@ -40,54 +44,43 @@ namespace GummiBear.Controllers
         [HttpPost]
         public IActionResult Create(Item item)
         {
-            itemRepo.Create(item);
+            ItemRepository.Save(item);
             return RedirectToAction("Index");
         }
-
-        public IActionResult Details(int id)
-        {
-            var thisItem = itemRepo.Items.FirstOrDefault(Items => Items.ItemId == id);
-            //thisItem.Reviews = itemRepo.Reviews.Where(Reviews => Reviews.ItemId == id).ToList();
-            return View(thisItem);
-        }
-
         public IActionResult Edit(int id)
         {
-            var thisItem = itemRepo.Items.FirstOrDefault(Items => Items.ItemId == id);
+            Item thisItem = ItemRepository.Items.FirstOrDefault(items => items.ItemId == id);
             return View(thisItem);
         }
-
         [HttpPost]
-        public IActionResult Edit(Item Item)
+        public IActionResult Edit(Item item)
         {
-            itemRepo.Edit(Item);
+            ItemRepository.Edit(item);
             return RedirectToAction("Index");
         }
 
         public IActionResult Delete(int id)
         {
-            var thisItem = itemRepo.Items.FirstOrDefault(Items => Items.ItemId == id);
+            Item thisItem = ItemRepository.Items.FirstOrDefault(items => items.ItemId == id);
             return View(thisItem);
         }
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
-            itemRepo.Delete(id);
+            Item thisItem = ItemRepository.Items.FirstOrDefault(items => items.ItemId == id);
+            ItemRepository.Remove(thisItem);
             return RedirectToAction("Index");
         }
-
         public IActionResult DeleteAll()
         {
             return View();
         }
-
         [HttpPost, ActionName("DeleteAll")]
-        public IActionResult DeleteAllItems()
+        public IActionResult DeleteAllConfirmed()
         {
-            itemRepo.DeleteAll();
-            return RedirectToAction("Index");
+            ItemRepository.RemoveAll();
+            return View("Index");
         }
-
     }
 }

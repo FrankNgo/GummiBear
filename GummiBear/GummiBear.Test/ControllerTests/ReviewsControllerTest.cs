@@ -1,43 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GummiBear.Controllers;
-using GummiBear.Models.Repositories;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GummiBear.Models;
+using GummiBear.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Moq;
 using System.Linq;
 
-namespace GummiBear.Tests.ControllerTests
+namespace GummiBearTest
 {
     [TestClass]
-    public class ReviewsControllerTests : IDisposable
+    public class ReviewsControllerTests
     {
-        public void Dispose()
-        {
-            db.DeleteAll();
-        }
-
         Mock<IReviewRepository> mock = new Mock<IReviewRepository>();
+        EFItemRepository dbProd = new EFItemRepository(new TestDbContext());
         EFReviewRepository db = new EFReviewRepository(new TestDbContext());
-        EFProductRepository pdb = new EFProductRepository(new TestDbContext());
 
-        private void DbSetup()
+        private void DbSetUp()
         {
             mock.Setup(m => m.Reviews).Returns(new Review[]
             {
-                new Review { ReviewId = 1, Author = "Bob", ContentBody = "This product is great", Rating = 5 },
-                new Review { ReviewId = 2, Author = "Joe", ContentBody = "This product is terrible", Rating = 1 },
-                new Review { ReviewId = 3, Author = "Frank", ContentBody = "This product is ok", Rating = 3 }
+                new Review {ReviewId = 1, Content = "A Review", Rating=4, Author="Frank Ngo"},
+                new Review {ReviewId = 2, Content = "Another Review", Rating=4, Author="Joe Smith"},
             }.AsQueryable());
         }
 
         [TestMethod]
-        public void Mock_GetReviewViewResultIndex_ActionResult()
+        public void Mock_GetViewResultIndex_ActionResult()
         {
             //arrange
-            DbSetup();
+            DbSetUp();
             ReviewsController controller = new ReviewsController(mock.Object);
 
             //act
@@ -48,113 +39,66 @@ namespace GummiBear.Tests.ControllerTests
         }
 
         [TestMethod]
-        public void Mock_ReviewIndexModelContainsReviews_Collection()
+        public void Mock_IndexContainsModelData_List()
         {
             //arrange
-            DbSetup();
+            DbSetUp();
+            ViewResult indexView = new ReviewsController(mock.Object).Index() as ViewResult;
+
+            //act
+            var result = indexView.ViewData.Model;
+
+            //assert
+            Assert.IsInstanceOfType(result, typeof(List<Review>));
+        }
+
+        [TestMethod]
+        public void Mock_IndexContainsReviews_Collection()
+        {
+            //arrange
+            DbSetUp();
             ReviewsController controller = new ReviewsController(mock.Object);
-            Review testReview = new Review { ReviewId = 1, Author = "Bob", ContentBody = "This product is great", Rating = 5 };
+            Review review = new Review { ReviewId = 1, Content = "A Review", Rating = 4, Author = "Frank Ngo" };
 
             //act
             ViewResult indexView = controller.Index() as ViewResult;
             List<Review> collection = indexView.ViewData.Model as List<Review>;
 
             //assert
-            CollectionAssert.Contains(collection, testReview);
+            CollectionAssert.Contains(collection, review);
         }
 
         [TestMethod]
-        public void Mock_ReviewPostViewResultCreate_ViewResult()
-        {
-            //arrange
-            DbSetup();
-            ReviewsController controller = new ReviewsController(mock.Object);
-            Review testReview = new Review { ReviewId = 1, Author = "Bob", ContentBody = "This product is great", Rating = 5 };
-
-            //act
-            var resultView = controller.Create(testReview);
-
-            //assert
-            Assert.IsInstanceOfType(resultView, typeof(RedirectToActionResult));
-        }
-
-        [TestMethod]
-        public void Mock_CreateReturnsView_ViewResult()
-        {
-            //arrange
-            DbSetup();
-            ReviewsController controller = new ReviewsController(mock.Object);
-            Review testReview = new Review { ReviewId = 1, Author = "Bob", ContentBody = "This product is great", Rating = 5 };
-
-            //act
-            var resultView = controller.Create(testReview.ReviewId);
-
-            //assert
-            Assert.IsInstanceOfType(resultView, typeof(ViewResult));
-        }
-
-        [TestMethod]
-        public void Mock_ReviewGetDetails_ReturnsView()
-        {
-            //arrange
-            DbSetup();
-            ReviewsController controller = new ReviewsController(mock.Object);
-            Review testReview = new Review { ReviewId = 1, Author = "Bob", ContentBody = "This product is great", Rating = 5 };
-
-            //act
-            var resultView = controller.Details(testReview.ReviewId) as ViewResult;
-            var model = resultView.ViewData.Model as Review;
-
-            //assert
-            Assert.IsInstanceOfType(resultView, typeof(ViewResult));
-            Assert.IsInstanceOfType(model, typeof(Review));
-        }
-
-        [TestMethod]
-        public void DB_CreatesNewReviews_Collection()
+        public void testDb_CreateReview_AddsReviewToDb()
         {
             //arrange
             ReviewsController controller = new ReviewsController(db);
-            ProductsController otherController = new ProductsController(pdb);
-            Product testProduct = new Product("Sponge", "Sponges up liquids", (decimal)1.99);
-            Review testReview = new Review("bob", "this is a great sponge", 5);
+            ItemsController prodController = new ItemsController(dbProd);
+            Item testItem = new Item { ItemId = 1, Name = "Blender" };
+            Review testReview = new Review { ReviewId = 1, Content = "A Review", Rating = 4, Author = "Frank Ngo" };
 
             //act
-            otherController.Create(testProduct);
-            testReview.ProductId = testProduct.ProductId;
-            controller.Create(testReview);
-
-
             var collection = (controller.Index() as ViewResult).ViewData.Model as List<Review>;
 
             //assert
             CollectionAssert.Contains(collection, testReview);
+  
         }
 
         [TestMethod]
-        public void DB_IndexListsReviews_Collection()
+        public void testDb_DeleteReview_RemovesReviewFromDb()
         {
             //arrange
             ReviewsController controller = new ReviewsController(db);
-            ProductsController otherController = new ProductsController(pdb);
-            Product testProduct = new Product("Sponge", "Sponges up liquids", (decimal)1.99);
-            Review testReview1 = new Review("bob", "this is a great sponge", 5);
-            Review testReview2 = new Review("frank", "this is a bad sponge", 1);
+            ItemsController prodController = new ItemsController(dbProd);
+            Item testItem = new Item { ItemId = 1, Name = "Blender" };
+            Review testReview = new Review { ReviewId = 1, Content = "A Review", Rating = 4, Author = "Frank Ngo" };
 
             //act
-            otherController.Create(testProduct);
-            testReview1.ProductId = testProduct.ProductId;
-            testReview2.ProductId = testProduct.ProductId;
-            controller.Create(testReview1);
-            controller.Create(testReview2);
             var collection = (controller.Index() as ViewResult).ViewData.Model as List<Review>;
-            List<Review> result = new List<Review> { testReview1, testReview2 };
 
             //assert
-            CollectionAssert.AreEqual(result, collection);
-            Assert.IsInstanceOfType(collection, typeof(List<Review>));
-
-
+            CollectionAssert.DoesNotContain(collection, testReview);
         }
     }
 }

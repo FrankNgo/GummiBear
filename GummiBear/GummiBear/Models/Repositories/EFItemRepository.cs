@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GummiBear.Models.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace GummiBear.Models
@@ -10,12 +9,10 @@ namespace GummiBear.Models
     public class EFItemRepository : IItemRepository
     {
         StoreDbContext db;
-
         public EFItemRepository()
         {
             db = new StoreDbContext();
         }
-
         public EFItemRepository(StoreDbContext thisDb)
         {
             db = thisDb;
@@ -24,32 +21,27 @@ namespace GummiBear.Models
         public IQueryable<Item> Items
         { get { return db.Items; } }
 
-        public IQueryable<Review> Reviews
-        { get { return db.Reviews; } }
-
-        public Item Create(Item Item)
+        public Item Save(Item item)
         {
-            db.Items.Add(Item);
+            db.Items.Add(item);
             db.SaveChanges();
-            return Item;
+            return item;
         }
 
-        public Item Edit(Item Item)
+        public Item Edit(Item item)
         {
-            db.Entry(Item).State = EntityState.Modified;
+            db.Entry(item).State = EntityState.Modified;
             db.SaveChanges();
-            return Item;
+            return item;
         }
 
-        public void Delete(int id)
+        public void Remove(Item item)
         {
-            var thisItem = db.Items.FirstOrDefault(Items => Items.ItemId == id);
-            db.Items.Remove(thisItem);
+            db.Items.Remove(item);
             db.SaveChanges();
         }
 
-
-        public void DeleteAll()
+        public void RemoveAll()
         {
             db.Database.ExecuteSqlCommand("DELETE FROM Items;");
         }

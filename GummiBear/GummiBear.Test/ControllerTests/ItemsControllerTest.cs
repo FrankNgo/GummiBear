@@ -1,37 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GummiBear.Models;
-using GummiBear.Tests;
-using Moq;
 using GummiBear.Controllers;
-using System.Threading.Tasks;
-using GummiBear.Models.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Moq;
+using System.Linq;
 
-namespace GummiBear.Test
+namespace GummiBear
 {
     [TestClass]
     public class ItemsControllerTests
-        {
-            Mock<IItemRepository> mock = new Mock<IItemRepository>();
+    {
+        Mock<IItemRepository> mock = new Mock<IItemRepository>();
+        EFItemRepository db = new EFItemRepository(new TestDbContext());
 
-            private void DbSetup()
+        private void DbSetUp()
+        {
+            mock.Setup(m => m.Items).Returns(new Item[]
             {
-                mock.Setup(m => m.Items).Returns(new Item[]
-                {
-                    new Item {ItemId = 1, Name = "Blender" },
-                    new Item {ItemId = 2, Name = "Mixer Cup"},
-                    new Item {ItemId = 3, Name = "Coffee"}
-                }.AsQueryable());
-            }
+                new Item {ItemId = 1, Name = "Blender"},
+                new Item {ItemId = 1, Name = "Ipod"},
+                new Item {ItemId = 1, Name = "Hat"}
+            }.AsQueryable());
+        }
 
         [TestMethod]
-        public void MockDB_IndexReturnsView_ActionResult()
+        public void Mock_GetViewResultIndex_ActionResult()
         {
             //arrange
-            DbSetup();
+            DbSetUp();
             ItemsController controller = new ItemsController(mock.Object);
 
             //act
@@ -42,10 +39,10 @@ namespace GummiBear.Test
         }
 
         [TestMethod]
-        public void Mock_ItemIndexContainsData_List()
+        public void Mock_IndexContainsData_List()
         {
             //arrange
-            DbSetup();
+            DbSetUp();
             ViewResult indexView = new ItemsController(mock.Object).Index() as ViewResult;
 
             //act
@@ -56,101 +53,83 @@ namespace GummiBear.Test
         }
 
         [TestMethod]
-        public void Mock_IndexModelContainsItems_Collection()
+        public void Mock_IndexContainsItems_Collection()
         {
             //arrange
-            DbSetup();
-            Item testItem = new Item { ItemId = 1, Name = "Blender" };
+            DbSetUp();
             ItemsController controller = new ItemsController(mock.Object);
+            Item item = new Item { ItemId = 1, Name = "Blender" };
 
             //act
             ViewResult indexView = controller.Index() as ViewResult;
             List<Item> collection = indexView.ViewData.Model as List<Item>;
 
             //assert
+            CollectionAssert.Contains(collection, item);
+        }
+
+        [TestMethod]
+        public void Mock_HttpGetDetails_ReturnsView()
+        {
+            //arrange
+            Item item = new Item { ItemId = 1, Name = "Blender" };
+            DbSetUp();
+            ItemsController controller = new ItemsController(mock.Object);
+
+            //act
+            var resultView = controller.Details(item.ItemId) as ViewResult;
+            var model = resultView.ViewData.Model as Item;
+
+            //assert
+            Assert.IsInstanceOfType(resultView, typeof(ViewResult));
+            Assert.IsInstanceOfType(model, typeof(Item));
+        }
+
+        [TestMethod]
+        public void testDb_CreateWorks_CreateInDB()
+        {
+            //arrange
+            ItemsController controller = new ItemsController(db);
+            Item testItem = new Item { ItemId = 1, Name = "Blender" };
+
+
+            //act
+            controller.Create(testItem);
+            var collection = (controller.Index() as ViewResult).ViewData.Model as List<Item>;
+
+            //assert
             CollectionAssert.Contains(collection, testItem);
-        }
-
-
-        [TestMethod]
-        public void Mock_PostViewResultCreate_ViewResult()
-        {
-            //arrange
-            DbSetup();
-            Item testItem = new Item { ItemId = 1, Name = "Blender"};
-            ItemsController controller = new ItemsController(mock.Object);
-
-            //act
-            var resultView = controller.Create(testItem);
-
-            //assert
-            Assert.IsInstanceOfType(resultView, typeof(RedirectToActionResult));
+            db.RemoveAll();
         }
 
         [TestMethod]
-        public void Mock_GetDetails_ReturnsView()
+        public void testDb_DeleteWorks_RemovesInDB()
         {
             //arrange
-            DbSetup();
-            Item testItem = new Item { ItemId = 1, Name = "Blender"};
-            ItemsController controller = new ItemsController(mock.Object);
-
-            //act
-            var resultView = controller.Details(testItem.ItemId) as ViewResult;
-
-            //assert
-            Assert.IsInstanceOfType(resultView, typeof(ViewResult));
-        }
-
-        [TestMethod]
-        public void Mock_EditItem_ReturnsView()
-        {
-            //arrange
-            DbSetup();
+            ItemsController controller = new ItemsController(db);
             Item testItem = new Item { ItemId = 1, Name = "Blender" };
-            ItemsController controller = new ItemsController(mock.Object);
 
             //act
-            var resultView = controller.Edit(testItem.ItemId) as ViewResult;
-            var model = resultView.ViewData.Model as Item;
+            var collection = (controller.Index() as ViewResult).ViewData.Model as List<Item>;
 
             //assert
-            Assert.IsInstanceOfType(resultView, typeof(ViewResult));
-            Assert.IsInstanceOfType(model, typeof(Item));
+            CollectionAssert.DoesNotContain(collection, testItem);
         }
 
         [TestMethod]
-        public void Mock_DeleteItem_ReturnsView()
+        public void testDb_EditWOrks_UpdatesInDb()
         {
             //arrange
-            DbSetup();
+            ItemsController controller = new ItemsController(db);
             Item testItem = new Item { ItemId = 1, Name = "Blender" };
-            ItemsController controller = new ItemsController(mock.Object);
-
-
-            //act
-            var resultView = controller.Delete(testItem.ItemId) as ViewResult;
-            var model = resultView.ViewData.Model as Item;
-
-            //assert
-            Assert.IsInstanceOfType(resultView, typeof(ViewResult));
-            Assert.IsInstanceOfType(model, typeof(Item));
-        }
-
-        [TestMethod]
-        public void Mock_DeleteAllItems_ReturnsView()
-        {
-            //arrange
-            DbSetup();
-            Item testItem = new Item { ItemId = 1, Name = "Blender"};
-            ItemsController controller = new ItemsController(mock.Object);
+            Item updatedItem = new Item { ItemId = 1, Name = "Blender" };
 
             //act
-            var resultView = controller.DeleteAll() as ViewResult;
+            testItem.Name = "Blender";
+            var returnedItem = (controller.Details(1) as ViewResult).ViewData.Model as Item;
 
             //assert
-            Assert.IsInstanceOfType(resultView, typeof(ViewResult));
+            Assert.AreEqual(returnedItem.Name, "Blender");
         }
-
     }
 }

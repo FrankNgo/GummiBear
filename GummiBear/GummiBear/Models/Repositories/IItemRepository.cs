@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GummiBear.Models.Repositories
+namespace GummiBear.Models
 {
     public interface IItemRepository
     {
-        IQueryable<Review> Reviews { get; }
         IQueryable<Item> Items { get; }
-        Item Create(Item item);
+        Item Save(Item item);
         Item Edit(Item item);
-        void Delete(int id);
-        void DeleteAll();
+        void Remove(Item item);
+        void RemoveAll();
     }
 }

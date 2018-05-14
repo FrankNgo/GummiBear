@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GummiBear.Models.Repositories
+namespace GummiBear.Models
 {
     public class EFReviewRepository : IReviewRepository
     {
-        StoreDbContext db;
+        StoreDbContext db = new StoreDbContext();
+
         public EFReviewRepository()
         {
             db = new StoreDbContext();
         }
-
         public EFReviewRepository(StoreDbContext thisDb)
         {
             db = thisDb;
@@ -22,14 +22,11 @@ namespace GummiBear.Models.Repositories
         public IQueryable<Review> Reviews
         { get { return db.Reviews; } }
 
-        public IQueryable<Item> Items
-        { get { return db.Items; } }
-
-        public Review Create(Review Review)
+        public Review Save(Review review)
         {
-            db.Reviews.Add(Review);
+            db.Reviews.Add(review);
             db.SaveChanges();
-            return Review;
+            return review;
         }
 
         public Review Edit(Review review)
@@ -39,17 +36,16 @@ namespace GummiBear.Models.Repositories
             return review;
         }
 
-        public void Delete(int id)
+        public void Remove(Review review)
         {
-            Review thisReview = db.Reviews.FirstOrDefault(Reviews => Reviews.ReviewId == id);
-            db.Reviews.Remove(thisReview);
+            db.Reviews.Remove(review);
             db.SaveChanges();
         }
 
-        public void DeleteAll()
+        public void RemoveAll()
         {
-            db.Database.ExecuteSqlCommand("DELETE FROM Reviews;");
+            db.Reviews.RemoveRange(db.Reviews);
+            db.SaveChanges();
         }
-
     }
 }
