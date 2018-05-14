@@ -32,7 +32,7 @@ namespace GummiBear.Migrations
                     Author = table.Column<string>(nullable: true),
                     Content = table.Column<string>(nullable: true),
                     ItemId = table.Column<int>(nullable: false),
-                    Rating = table.Column<string>(nullable: true)
+                    Rating = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

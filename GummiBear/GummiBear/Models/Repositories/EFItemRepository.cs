@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GummiBear.Models.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace GummiBear.Models
 {
     public class EFItemRepository : IItemRepository
     {
-
-        StoreDbContext db = new StoreDbContext();
+        StoreDbContext db;
 
         public EFItemRepository()
         {
@@ -21,9 +21,13 @@ namespace GummiBear.Models
             db = thisDb;
         }
 
-        public IQueryable<Item> Items { get { return db.Items; } }
+        public IQueryable<Item> Items
+        { get { return db.Items; } }
 
-        public Item Save(Item Item)
+        public IQueryable<Review> Reviews
+        { get { return db.Reviews; } }
+
+        public Item Create(Item Item)
         {
             db.Items.Add(Item);
             db.SaveChanges();
@@ -37,25 +41,17 @@ namespace GummiBear.Models
             return Item;
         }
 
-        public void Remove(Item Item)
+        public void Delete(int id)
         {
-            db.Items.Remove(Item);
+            var thisItem = db.Items.FirstOrDefault(Items => Items.ItemId == id);
+            db.Items.Remove(thisItem);
             db.SaveChanges();
         }
 
-        public IQueryable<Review> Reviews { get { return db.Reviews; } }
 
-        public Review Save(Review review)
+        public void DeleteAll()
         {
-            db.Reviews.Add(review);
-            db.SaveChanges();
-            return review;
-        }
-
-        public void RemoveAll()
-        {
-            db.Items.RemoveRange(db.Items);
-            db.SaveChanges();
+            db.Database.ExecuteSqlCommand("DELETE FROM Items;");
         }
     }
 }

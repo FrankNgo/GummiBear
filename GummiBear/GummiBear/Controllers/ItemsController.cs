@@ -6,14 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using GummiBear.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
+using GummiBear.Models.Repositories;
 
 namespace GummiBear.Controllers
 {
     public class ItemsController : Controller
     {
-        private StoreDbContext db = new StoreDbContext();
-
         private IItemRepository itemRepo;
 
         public ItemsController(IItemRepository repo = null)
@@ -28,92 +26,56 @@ namespace GummiBear.Controllers
             }
         }
 
-        private readonly StoreDbContext _context;
-
-        public ItemsController(StoreDbContext context)
+        public IActionResult Index()
         {
-            _context = context;
+            List<Item> model = itemRepo.Items.ToList();
+            return View(model);
         }
-
-
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Items.ToListAsync());
-        }
-
-
-        public async Task<IActionResult> Details(int? id)
-        {
-            var item = await _context.Items.SingleOrDefaultAsync(m => m.ItemId == id);
-            return View(item);
-        }
-
 
         public IActionResult Create()
         {
             return View();
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("ItemId,Name,Cost,Description")] Item item)
+        public IActionResult Create(Item item)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(item);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            return View(item);
-        }
-
-        public async Task<IActionResult> Edit(int? id)
-        {
-            var item = await _context.Items.SingleOrDefaultAsync(m => m.ItemId == id);
-            return View(item);
-        }
-
-        [HttpPost]  
-        public async Task<IActionResult> Edit(int id, [Bind("GummiId,Name,Cost,Description")] Item item)
-        {
-            if (id != item.ItemId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(item);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                  
-                        throw;
-                   
-                }
-                return RedirectToAction("Index");
-            }
-            return View(item);
-        }
-
-        public async Task<IActionResult> Delete(int? id)
-        {    
-            var item = await _context.Items.SingleOrDefaultAsync(m => m.ItemId == id);
-            return View(item);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var item = await _context.Items.SingleOrDefaultAsync(m => m.ItemId == id);
-            _context.Items.Remove(item);
-            await _context.SaveChangesAsync();
+            itemRepo.Create(item);
             return RedirectToAction("Index");
         }
 
+        public IActionResult Details(int id)
+        {
+            var thisItem = itemRepo.Items.FirstOrDefault(Items => Items.ItemId == id);
+            //thisItem.Reviews = itemRepo.Reviews.Where(Reviews => Reviews.ItemId == id).ToList();
+            return View(thisItem);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var thisItem = itemRepo.Items.FirstOrDefault(Items => Items.ItemId == id);
+            return View(thisItem);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Item Item)
+        {
+            itemRepo.Edit(Item);
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Delete(int id)
+        {
+            var thisItem = itemRepo.Items.FirstOrDefault(Items => Items.ItemId == id);
+            return View(thisItem);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            itemRepo.Delete(id);
+            return RedirectToAction("Index");
+        }
 
         public IActionResult DeleteAll()
         {
@@ -121,9 +83,9 @@ namespace GummiBear.Controllers
         }
 
         [HttpPost, ActionName("DeleteAll")]
-        public IActionResult DeleteAllConfirmed()
+        public IActionResult DeleteAllItems()
         {
-            itemRepo.RemoveAll();
+            itemRepo.DeleteAll();
             return RedirectToAction("Index");
         }
 

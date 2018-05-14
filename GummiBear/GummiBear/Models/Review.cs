@@ -11,6 +11,8 @@ namespace GummiBear.Models
         public string Author { get; set; }
         public string Content { get; set; }
         public int Rating { get; set; }
+
+        [ForeignKey("Items")]
         public int ItemId { get; set; }
         public virtual Item Item { get; set; }
     }
