@@ -7,7 +7,6 @@ using GummiBear.Models.Repositories;
 using System;
 
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace GummiBear.Controllers
 {
@@ -15,7 +14,6 @@ namespace GummiBear.Controllers
     {
         private IItemRepository ItemRepo;
         private IReviewRepository ReviewRepo;
-
         public ReviewsController(IItemRepository pRepo = null, IReviewRepository rRepo = null)
         {
             ItemRepo = pRepo ?? new EFItemRepository();
@@ -25,8 +23,8 @@ namespace GummiBear.Controllers
         public IActionResult Index(int id)
         {
             List<Review> model = ReviewRepo.Reviews.Where(r => r.ItemId == id).Include(r => r.Item).ToList();
-            Item product = ItemRepo.Items.Include(p => p.Reviews).FirstOrDefault(p => p.ItemId == id);
-            ViewBag.Item = product;
+            Item item = ItemRepo.Items.Include(p => p.Reviews).FirstOrDefault(p => p.ItemId == id);
+            ViewBag.Item = item;
             return View(model);
         }
 
@@ -39,9 +37,9 @@ namespace GummiBear.Controllers
         [HttpPost]
         public IActionResult Create(Review review)
         {
-           
-                ReviewRepo.Create(review);
-                return RedirectToAction("Index", new { id = review.ItemId });
+
+            ReviewRepo.Create(review);
+            return RedirectToAction("Index", new { id = review.ItemId });
         }
 
         //no views for details

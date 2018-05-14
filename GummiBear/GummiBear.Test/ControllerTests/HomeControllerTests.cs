@@ -1,31 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.AspNetCore.Mvc;
-using GummiBear.Models;
-using GummiBear.Tests;
-using Moq;
 using GummiBear.Controllers;
-using System.Threading.Tasks;
-
+using GummiBear.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace GummiBear.Tests
 {
     [TestClass]
-    public class HomeControllerTest
+    public class HomeControllerTests
     {
         [TestMethod]
-        public void Controller_ReturnsViewIndex_Index()
+        public void HomeController_ReturnView_View()
         {
-            //Arrange
+            //arrange
             HomeController controller = new HomeController();
 
-            //Act
-            var result = controller.Index();
+            //act
+            var Index = new HomeController().Index();
 
-            //Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
+            //assert
+            Assert.IsInstanceOfType(Index, typeof(ViewResult));
         }
+
     }
 }
